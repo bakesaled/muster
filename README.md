@@ -1,7 +1,7 @@
 # Muster
 
 
-A tool that collects your financial information from the web.
+A tool that retrieves your financial information from the web.
 
 ## Installation
 

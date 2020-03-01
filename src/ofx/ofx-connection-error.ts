@@ -1,8 +1,7 @@
-import { OfxStatus } from './ofx-status';
+import { OfxConnectionStatus } from './ofx-response-status';
 
 export class OfxConnectionError extends Error {
-  public friendlyMessage: string;
-  public ofxStatus: OfxStatus;
+  public ofxConnectionStatus: OfxConnectionStatus;
 
   constructor(public errorCode: number, ...params) {
     super(...params);
@@ -12,34 +11,32 @@ export class OfxConnectionError extends Error {
       Error.captureStackTrace(this, OfxConnectionError);
     }
 
+    this.ofxConnectionStatus = {
+      code: errorCode,
+      message: '?'
+    };
     switch (errorCode) {
       case 301:
-        this.friendlyMessage = 'Moved Permanently. Check url.';
-        this.ofxStatus = OfxStatus.Error;
+        this.ofxConnectionStatus.message = 'Moved Permanently. Check url.';
         break;
       case 302:
-        this.friendlyMessage = 'Temporarily unable to connect.';
-        this.ofxStatus = OfxStatus.ServerDown;
+        this.ofxConnectionStatus.message = 'Temporarily unable to connect.';
         break;
       case 400:
-        this.friendlyMessage = 'Bad Request';
-        this.ofxStatus = OfxStatus.Error;
+        this.ofxConnectionStatus.message = 'Bad Request';
         break;
       case 401:
-        this.friendlyMessage = 'Unauthorized.  Check login info.';
-        this.ofxStatus = OfxStatus.Error;
+        this.ofxConnectionStatus.message = 'Unauthorized.  Check login info.';
         break;
       case 403:
-        this.friendlyMessage = 'Forbidden';
-        this.ofxStatus = OfxStatus.Error;
+        this.ofxConnectionStatus.message = 'Forbidden';
         break;
       case 408:
-        this.friendlyMessage = 'Request Timeout';
-        this.ofxStatus = OfxStatus.Error;
+        this.ofxConnectionStatus.message = 'Request Timeout';
         break;
       default:
-        this.friendlyMessage = 'Connection failure';
-        this.ofxStatus = OfxStatus.Error;
+        this.ofxConnectionStatus.message =
+          'Undefined connection failure:' + params[0];
     }
 
     Object.setPrototypeOf(this, OfxConnectionError.prototype);

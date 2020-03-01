@@ -3,12 +3,11 @@ import {
   OfxDateRange,
   OfxRequestService,
   OfxDateUtil,
-  OfxBody,
-  OfxResultValidator,
-  OfxStatus
+  OfxResultValidator
 } from '../ofx';
 import * as prompts from 'prompts';
 import { subMonths } from 'date-fns';
+import * as fs from 'fs';
 
 const main = async () => {
   try {
@@ -105,17 +104,36 @@ const main = async () => {
     requestOptions.password = passwordAnswer.password;
 
     const ofxRequestService = new OfxRequestService(requestOptions);
-    let results: OfxBody;
+    let results: string;
     if (choice.value === 1) {
       results = await ofxRequestService.getStatement(dateRange);
     } else {
       results = await ofxRequestService.getAccounts();
     }
     const commStatus = OfxResultValidator.validate(results);
-    if (commStatus.generalStatus === OfxStatus.Success) {
-      console.info('success!', commStatus);
-    } else {
-      console.error('Comm Status Error!', commStatus);
+    console.info('success!', commStatus);
+    const saveAnswer = await prompts({
+      type: 'toggle',
+      name: 'value',
+      message: 'save to file?',
+      initial: true,
+      active: 'yes',
+      inactive: 'no'
+    });
+    if (saveAnswer.value) {
+      const fileNameAnswer = await prompts({
+        type: 'text',
+        name: 'value',
+        message: 'file name: '
+      });
+      const writeStream = fs.createWriteStream(
+        `output/${fileNameAnswer.value}`
+      );
+      writeStream.write(results, 'utf8');
+      writeStream.on('finish', () => {
+        console.info('file saved.');
+      });
+      writeStream.end();
     }
   } catch (e) {
     console.error('error', e);

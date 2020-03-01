@@ -1,6 +1,5 @@
 import { OfxOptions } from './ofx-options';
 import { UrlWithStringQuery } from 'url';
-import { OfxBody } from './ofx-response';
 import { OfxService } from './ofx.service';
 import { OfxDateRange } from './ofx-date-range';
 import * as Url from 'url';
@@ -10,19 +9,16 @@ import { OfxConnectionError } from './ofx-connection-error';
 export class OfxRequestService {
   constructor(private options: OfxOptions) {}
 
-  public async getAccounts(): Promise<OfxBody> {
+  public async getAccounts(): Promise<string> {
     const ofxPayload = OfxService.buildAccountListRequest(this.options);
-    const result = await this.sendRequest(this.options, ofxPayload);
-    console.debug('sent', result);
-    return await OfxService.parse(result);
+    return await this.sendRequest(this.options, ofxPayload);
   }
 
   public async getStatement(dateRange: OfxDateRange) {
     this.options.start = dateRange.start;
     this.options.end = dateRange.end;
     const ofxPayload = OfxService.buildStatementRequest(this.options);
-    const result = await this.sendRequest(this.options, ofxPayload);
-    return await OfxService.parse(result);
+    return await this.sendRequest(this.options, ofxPayload);
   }
 
   private convertBankingOptionsToHeaderString(
@@ -99,7 +95,8 @@ export class OfxRequestService {
     });
 
     socket.on('error', err => {
-      cb(err);
+      const ofxErr = new OfxConnectionError(500, err);
+      cb(ofxErr);
     });
 
     socket.on('end', () => {

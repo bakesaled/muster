@@ -32,7 +32,7 @@
     "date-fns": "^2.9.0",
     "prompts": "^2.3.1",
     "uuid": "^3.4.0",
-    "xml2js": "^0.4.23"
+    "xmldom": "^0.2.1"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^11.0.2",
@@ -41,6 +41,7 @@
     "@types/node": "^13.1.6",
     "@types/prompts": "^2.0.3",
     "@types/uuid": "^3.4.7",
+    "@types/xmldom": "^0.1.29",
     "jest": "^24.9.0",
     "prettier": "^1.18.2",
     "rimraf": "^3.0.0",

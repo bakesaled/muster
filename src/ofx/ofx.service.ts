@@ -1,7 +1,5 @@
 import { OfxOptions } from './ofx-options';
 import * as uuid from 'uuid';
-import { OfxBody } from './ofx-response';
-import * as Xml2JsParser from 'xml2js';
 
 export class OfxService {
   public static buildAccountListRequest(options: OfxOptions) {
@@ -112,46 +110,6 @@ export class OfxService {
     reqStr += '</OFX>';
     console.debug('OFX-RequestString:', reqStr);
     return reqStr;
-  }
-
-  public static parse(ofxString: string): Promise<OfxBody> {
-    return new Promise((resolve, reject) => {
-      const ofxResult = ofxString.split('<OFX>', 2);
-      const ofxPart = `<OFX>${ofxResult[1]}`;
-
-      // TODO: Check headers?
-      // const headerPart = ofxResult[0].split(/\r|\n/);
-
-      const xml = ofxPart
-        // Replace ampersand
-        .replace(/&/g, `&#038;`)
-        .replace(/&amp;/g, `&#038;`)
-        // Remove empty spaces and line breaks between tags
-        .replace(/>\s+</g, '><')
-        // Remove empty spaces and line breaks before tags content
-        .replace(/\s+</g, '<')
-        // Remove empty spaces and line breaks after tags content
-        .replace(/>\s+/g, '>')
-        // Remove dots in start-tags names and remove end-tags with dots
-        .replace(
-          /<([A-Z0-9_]*)+\.+([A-Z0-9_]*)>([^<]+)(<\/\1\.\2>)?/g,
-          '<$1$2>$3'
-        )
-        // Add a new end-tags for the ofx elements
-        .replace(/<(\w+?)>([^<]+)/g, '<$1>$2</<added>$1>')
-        // Remove duplicate end-tags
-        .replace(/<\/<added>(\w+?)>(<\/\1>)?/g, '</$1>');
-
-      let json;
-      const parser = new Xml2JsParser.Parser({ explicitArray: false });
-      parser.parseString(xml, (err, result) => {
-        if (err) {
-          reject(err);
-        }
-        json = result;
-        resolve(json);
-      });
-    });
   }
 
   private static getOfxHeaders(options: OfxOptions) {
