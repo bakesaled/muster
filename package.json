@@ -1,6 +1,6 @@
 {
   "name": "@bakesaled/muster",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A tool that collects your financial information from the web.",
   "author": "Brandon Eleuterio",
   "license": "MIT",
@@ -13,9 +13,14 @@
   "files": [
     "dist"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bakesaled/muster.git"
+  },
   "main": "dist/main.js",
   "module": "dist/main.es.js",
   "jsnext:main": "dist/index.es.js",
+  "typings": "dist/index.d.ts",
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "rollup -c",
@@ -57,7 +62,11 @@
     "tslint-config-prettier": "^1.18.0",
     "typescript": "^3.7.4"
   },
-  "peerDependencies": {},
+  "peerDependencies": {
+    "date-fns": "^2.9.0",
+    "uuid": "^3.4.0",
+    "xmldom": "^0.2.1"
+  },
   "jest": {
     "moduleFileExtensions": [
       "js",
