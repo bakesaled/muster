@@ -1,7 +1,7 @@
 export class OfxDateUtil {
   public static DateToOfxDate(date: Date): string {
     const year = date.getUTCFullYear();
-    const month = this.addLeadingZero(date.getUTCMonth());
+    const month = this.addLeadingZero(date.getUTCMonth() + 1);
     const day = this.addLeadingZero(date.getUTCDate());
     return `${year}${month}${day}`;
   }
