@@ -7,6 +7,8 @@ import * as tls from 'tls';
 import { OfxConnectionError } from './ofx-connection-error';
 
 export class OfxRequestService {
+  private debug: boolean;
+
   constructor(private options: OfxOptions) {}
 
   public async getAccounts(): Promise<string> {
@@ -14,10 +16,11 @@ export class OfxRequestService {
     return await this.sendRequest(this.options, ofxPayload);
   }
 
-  public async getStatement(dateRange: OfxDateRange) {
+  public async getStatement(dateRange: OfxDateRange, debug: boolean = false) {
+    this.debug = debug;
     this.options.start = dateRange.start;
     this.options.end = dateRange.end;
-    const ofxPayload = OfxService.buildStatementRequest(this.options);
+    const ofxPayload = OfxService.buildStatementRequest(this.options, debug);
     return await this.sendRequest(this.options, ofxPayload);
   }
 
@@ -79,12 +82,14 @@ export class OfxRequestService {
       );
       buffer += '\r\n';
       buffer += ofxPayload;
-      console.debug(
-        'sending request',
-        tlsOptions.port,
-        tlsOptions.host,
-        buffer
-      );
+      if (this.debug) {
+        console.debug(
+          'sending request',
+          tlsOptions.port,
+          tlsOptions.host,
+          buffer
+        );
+      }
       socket.write(buffer);
     });
 
@@ -102,7 +107,9 @@ export class OfxRequestService {
     socket.on('end', () => {
       let error: any = true;
       const httpHeaderMatcher = new RegExp(/HTTP\/\d\.\d (\d{3}) (.*)/);
-      console.log('response', data);
+      if (this.debug) {
+        console.debug('response', data);
+      }
       const matches = httpHeaderMatcher.exec(data);
       if (matches && matches.length > 2) {
         if (parseInt(matches[1], 10) === 200) {

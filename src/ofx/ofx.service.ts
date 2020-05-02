@@ -19,7 +19,10 @@ export class OfxService {
     );
   }
 
-  public static buildStatementRequest(options: OfxOptions) {
+  public static buildStatementRequest(
+    options: OfxOptions,
+    debug: boolean = false
+  ) {
     const type = (options.accType || '').toUpperCase();
     let reqStr =
       OfxService.getOfxHeaders(options) +
@@ -108,7 +111,9 @@ export class OfxService {
     }
 
     reqStr += '</OFX>';
-    console.debug('OFX-RequestString:', reqStr);
+    if (debug) {
+      console.debug('OFX-RequestString:', reqStr);
+    }
     return reqStr;
   }
 

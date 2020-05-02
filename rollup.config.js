@@ -23,6 +23,7 @@ export default {
     ...Object.keys(pkg.dependencies || {}),
     ...Object.keys(pkg.peerDependencies || {}),
     'url',
+    'net',
     'tls'
   ],
   plugins: [

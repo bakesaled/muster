@@ -97,6 +97,9 @@ export class OfxResultValidator {
   }
 
   private static convertStatusToJSON(statusNode: Element): OfxStatus {
+    if (!statusNode) {
+      return null;
+    }
     const statusXML = statusNode.getElementsByTagName('STATUS').item(0);
     if (!statusXML) {
       return null;
