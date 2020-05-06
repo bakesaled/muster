@@ -3,7 +3,8 @@ import {
   OfxDateRange,
   OfxRequestService,
   OfxDateUtil,
-  OfxResultValidator
+  OfxResultValidator,
+  OfxConnectionError
 } from '../ofx';
 import * as prompts from 'prompts';
 import { subMonths } from 'date-fns';
@@ -127,12 +128,22 @@ const main = async () => {
 
     const ofxRequestService = new OfxRequestService(requestOptions);
     let results: string;
-    if (choice.value === 1) {
-      results = await ofxRequestService.getStatement(dateRange);
-    } else {
-      results = await ofxRequestService.getAccounts();
+    let commStatus;
+    try {
+      if (choice.value === 1) {
+        results = await ofxRequestService.getStatement(dateRange);
+      } else {
+        results = await ofxRequestService.getAccounts();
+      }
+      commStatus = OfxResultValidator.validate(results);
+    } catch (err) {
+      if (err instanceof OfxConnectionError) {
+        commStatus = OfxResultValidator.validate(results, {
+          code: err.errorCode,
+          message: err.message
+        });
+      }
     }
-    const commStatus = OfxResultValidator.validate(results);
     console.info('success!', commStatus);
     const saveAnswer = await prompts({
       type: 'toggle',
@@ -156,6 +167,8 @@ const main = async () => {
         console.info('file saved.');
       });
       writeStream.end();
+    } else {
+      console.info('done');
     }
   } catch (e) {
     console.error('error', e);

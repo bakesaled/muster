@@ -1,8 +1,23 @@
 import { DOMParser } from 'xmldom';
-import { OfxResponseStatus, OfxStatus } from './ofx-response-status';
+import {
+  OfxConnectionStatus,
+  OfxResponseStatus,
+  OfxStatus
+} from './ofx-response-status';
 
 export class OfxResultValidator {
-  public static validate(res: string): OfxResponseStatus {
+  public static validate(
+    res: string,
+    connStatus: OfxConnectionStatus = { code: 200, message: 'OK' }
+  ): OfxResponseStatus {
+    if (connStatus.code !== 200) {
+      return {
+        connectionStatus: connStatus,
+        signOnStatus: undefined,
+        signUpStatus: undefined,
+        specificStatus: undefined
+      };
+    }
     const cleanRes = OfxResultValidator.cleanXML(res);
     const parser = new DOMParser();
     const xmlDocument = parser.parseFromString(cleanRes, 'text/xml');
@@ -35,10 +50,7 @@ export class OfxResultValidator {
     }
 
     return {
-      connectionStatus: {
-        code: 200,
-        message: 'OK'
-      },
+      connectionStatus: connStatus,
       signOnStatus: signOnStatus,
       signUpStatus: signUpStatus,
       specificStatus: specificStatus
