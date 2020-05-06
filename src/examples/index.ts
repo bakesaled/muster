@@ -11,7 +11,7 @@ import * as fs from 'fs';
 
 const main = async () => {
   try {
-    const requestOptions: OfxOptions = {
+    let requestOptions: OfxOptions = {
       url: 'https://ofx.schwab.com/bankcgi_dev/ofx_server',
       fid: '101',
       fidOrg: 'ISC',
@@ -35,6 +35,28 @@ const main = async () => {
       Accept: 'application/ofx',
       Connection: 'Close'
     };
+
+    const filePrompt = await prompts({
+      type: 'toggle',
+      name: 'value',
+      message: 'load options from file?',
+      initial: true,
+      active: 'yes',
+      inactive: 'no'
+    });
+    if (filePrompt.value) {
+      const fileNameAnswer = await prompts({
+        type: 'text',
+        name: 'value',
+        message: 'file name: '
+      });
+      const fileContents = fs.readFileSync(
+        `input/${fileNameAnswer.value}`,
+        'utf8'
+      );
+      requestOptions = JSON.parse(fileContents);
+      console.info('file loaded.');
+    }
 
     const choice = await prompts({
       type: 'select',
