@@ -158,7 +158,7 @@ export class OfxService {
       options.app +
       `<APPVER>` +
       options.appVer +
-      (typeof options.clientId !== `undefined`
+      (typeof options.clientId !== `undefined` && options.clientId.length > 0
         ? `<CLIENTUID>` + options.clientId
         : ``) +
       `</SONRQ>` +
