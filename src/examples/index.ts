@@ -105,8 +105,14 @@ const main = async () => {
         message: 'end date: '
       });
       dateRange = {
-        start: OfxDateUtil.DateToOfxDate(dateRangeStartAnswer.value),
-        end: OfxDateUtil.DateToOfxDate(dateRangeEndAnswer.value)
+        start: OfxDateUtil.DateToOfxDate(
+          dateRangeStartAnswer.value,
+          requestOptions.dateRangeAdjustment
+        ),
+        end: OfxDateUtil.DateToOfxDate(
+          dateRangeEndAnswer.value,
+          requestOptions.dateRangeAdjustment
+        )
       };
     }
     const usernameAnswer = await prompts({
@@ -131,7 +137,7 @@ const main = async () => {
     let commStatus;
     try {
       if (choice.value === 1) {
-        results = await ofxRequestService.getStatement(dateRange);
+        results = await ofxRequestService.getStatement(dateRange, true);
       } else {
         results = await ofxRequestService.getAccounts();
       }

@@ -20,4 +20,5 @@ export interface OfxOptions {
   Accept?: string;
   Connection?: string;
   headers?: string[];
+  dateRangeAdjustment?: number;
 }

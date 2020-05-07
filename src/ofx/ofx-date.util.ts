@@ -1,5 +1,10 @@
+import { addDays } from 'date-fns';
+
 export class OfxDateUtil {
-  public static DateToOfxDate(date: Date): string {
+  public static DateToOfxDate(date: Date, adjustment?: number): string {
+    if (adjustment) {
+      date = addDays(date, adjustment);
+    }
     const year = date.getUTCFullYear();
     const month = this.addLeadingZero(date.getUTCMonth() + 1);
     const day = this.addLeadingZero(date.getUTCDate());
