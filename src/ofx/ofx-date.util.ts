@@ -5,9 +5,9 @@ export class OfxDateUtil {
     if (adjustment) {
       date = addDays(date, adjustment);
     }
-    const year = date.getUTCFullYear();
-    const month = this.addLeadingZero(date.getUTCMonth() + 1);
-    const day = this.addLeadingZero(date.getUTCDate());
+    const year = date.getFullYear();
+    const month = this.addLeadingZero(date.getMonth() + 1);
+    const day = this.addLeadingZero(date.getDate());
     return `${year}${month}${day}`;
   }
 
