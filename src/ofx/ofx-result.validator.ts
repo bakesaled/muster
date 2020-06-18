@@ -119,8 +119,10 @@ export class OfxResultValidator {
     return {
       CODE: statusXML.getElementsByTagName('CODE').item(0).childNodes[0]
         .nodeValue,
-      MESSAGE: statusXML.getElementsByTagName('MESSAGE').item(0).childNodes[0]
-        .nodeValue,
+      MESSAGE: statusXML.getElementsByTagName('MESSAGE').item(0)
+        ? statusXML.getElementsByTagName('MESSAGE').item(0).childNodes[0]
+            .nodeValue
+        : '',
       SEVERITY: statusXML.getElementsByTagName('SEVERITY').item(0).childNodes[0]
         .nodeValue
     };
